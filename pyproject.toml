@@ -1,0 +1,9 @@
+[project]
+name = "lmnf"
+version = "0.1.0"
+description = "Modpack Downloader 4 Labymod BC It Won't Download ALL Modpack Mods"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "requests>=2.32.5",
+]
