@@ -1,5 +1,3 @@
-from os.path import abspath
-
 from scripts.constants import DOWNLOADS
 from scripts.helper import choose, extract_pack, get_downloads, install_modpack
 

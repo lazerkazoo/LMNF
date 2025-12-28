@@ -1,11 +1,10 @@
 import json
-from os import listdir, makedirs
+from os import listdir, makedirs, remove
 from os.path import dirname
 from shutil import copy, copytree
 from zipfile import ZipFile
 
 import requests
-from urllib3 import disable_warnings
 
 from scripts.constants import ADDONS_DIR, DOWNLOADS, MODPACKS_DIR, MODPACKS_FILE
 
@@ -21,7 +20,7 @@ def download_file(url: str, dest: str):
 
 def choose(ls: list):
     for i, j in enumerate(ls):
-        print(f"({i + 1}) {j}")
+        print(f"[{i + 1}] {j}")
 
     return ls[int(input("choose -> ")) - 1]
 
@@ -45,7 +44,7 @@ def extract_pack(pack: str, dir=DOWNLOADS):
         z.extractall("/tmp/modpack")
 
 
-def install_modpack(file=None):
+def install_modpack(file2copy: str):
     modpacks = load_json(MODPACKS_FILE)
     index = load_json("/tmp/modpack/modrinth.index.json")
     name = index["name"]
@@ -59,7 +58,9 @@ def install_modpack(file=None):
     for num, i in enumerate(files):
         url = i["downloads"][0]
         dest = f"{dir}/fabric/{mc}/{i['path']}"
-        print(f"({num + 1}) downloading {dest.split('/')[-1]}")
+        print(
+            f"[{dirname(dest).split('/')[-1]}] [{num + 1}/{len(files)}] downloading {dest.split('/')[-1]}"
+        )
         download_file(url, dest)
 
     modpacks["packs"][name.lower()] = {
@@ -70,15 +71,13 @@ def install_modpack(file=None):
 
     if confirm("copy addons from other modpacks"):
         copytree(ADDONS_DIR, f"{dir}/addons", dirs_exist_ok=True)
+        if "optifine.jar" in listdir(f"{dir}/addons"):
+            remove(f"{dir}/addons/optifine.jar")
 
-    if file is not None:
-        copy(file, f"{dir}")
+    if file2copy is not None:
+        copy(file2copy, f"{dir}")
 
     save_json(MODPACKS_FILE, modpacks)
-
-
-# def get_modpacks():
-#     return list(listdir(MODPACKS_DIR))
 
 
 def get_downloads():
