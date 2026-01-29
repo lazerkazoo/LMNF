@@ -2,6 +2,7 @@ import json
 from os import listdir, makedirs, remove
 from os.path import dirname
 from shutil import copy, copytree
+from threading import Thread
 from zipfile import ZipFile
 
 import requests
@@ -55,13 +56,19 @@ def install_modpack(file2copy: str):
     makedirs(f"{dir}/addons", exist_ok=True)
     makedirs(f"{dir}/fabric", exist_ok=True)
 
-    for num, i in enumerate(files):
+    threads: list[Thread] = []
+    for i in files:
         url = i["downloads"][0]
         dest = f"{dir}/fabric/{mc}/{i['path']}"
+        threads.append(Thread(target=download_file, args=(url, dest)))
+
+    for num, thread in enumerate(threads):
+        if num % 10 == 0 and num > 0:
+            threads[num - 10].join()
         print(
             f"[{dirname(dest).split('/')[-1]}] [{num + 1}/{len(files)}] downloading {dest.split('/')[-1]}"
         )
-        download_file(url, dest)
+        thread.start()
 
     modpacks["packs"][name.lower()] = {
         "name": name,
