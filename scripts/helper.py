@@ -51,7 +51,7 @@ def install_modpack(file2copy: str):
     name = index["name"]
     files = index["files"]
     mc = index["dependencies"]["minecraft"]
-    dir = f"{MODPACKS_DIR}/{name.lower()}"
+    dir = join(MODPACKS_DIR, name.lower())
 
     makedirs(join(dir, "addons"), exist_ok=True)
     makedirs(join(dir, "fabric"), exist_ok=True)
