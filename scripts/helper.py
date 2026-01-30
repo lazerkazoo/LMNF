@@ -1,6 +1,6 @@
 import json
 from os import listdir, makedirs, remove
-from os.path import dirname
+from os.path import dirname, join
 from shutil import copy, copytree
 from threading import Thread
 from zipfile import ZipFile
@@ -41,33 +41,31 @@ def save_json(path: str, js):
 
 
 def extract_pack(pack: str, dir=DOWNLOADS):
-    with ZipFile(f"{dir}/{pack}", "r") as z:
-        z.extractall("/tmp/modpack")
+    with ZipFile(join(dir, pack), "r") as z:
+        z.extractall(join("tmp", "modpack"))
 
 
 def install_modpack(file2copy: str):
     modpacks = load_json(MODPACKS_FILE)
-    index = load_json("/tmp/modpack/modrinth.index.json")
+    index = load_json(join("tmp", "modpack", "modrinth.index.json"))
     name = index["name"]
     files = index["files"]
     mc = index["dependencies"]["minecraft"]
     dir = f"{MODPACKS_DIR}/{name.lower()}"
 
-    makedirs(f"{dir}/addons", exist_ok=True)
-    makedirs(f"{dir}/fabric", exist_ok=True)
+    makedirs(join(dir, "addons"), exist_ok=True)
+    makedirs(join(dir, "fabric"), exist_ok=True)
 
     threads: list[Thread] = []
     for i in files:
         url = i["downloads"][0]
-        dest = f"{dir}/fabric/{mc}/{i['path']}"
+        dest = join(dir, "fabric", mc, i["path"])
         threads.append(Thread(target=download_file, args=(url, dest)))
 
     for num, thread in enumerate(threads):
         if num % 10 == 0 and num > 0:
             threads[num - 10].join()
-        print(
-            f"[{dirname(dest).split('/')[-1]}] [{num + 1}/{len(files)}] downloading {dest.split('/')[-1]}"
-        )
+        print(f"[{dirname(dest).split('/')[-1]}] [{num + 1}/{len(files)}]")
         thread.start()
 
     modpacks["packs"][name.lower()] = {
@@ -76,10 +74,12 @@ def install_modpack(file2copy: str):
         "modLoader": "fabric",
     }
 
+    addon_dir = join(dir, "addons")
+
     if confirm("copy addons from other modpacks"):
-        copytree(ADDONS_DIR, f"{dir}/addons", dirs_exist_ok=True)
-        if "optifine.jar" in listdir(f"{dir}/addons"):
-            remove(f"{dir}/addons/optifine.jar")
+        copytree(ADDONS_DIR, addon_dir, dirs_exist_ok=True)
+        if "optifine.jar" in listdir(addon_dir):
+            remove(join(addon_dir, "optifine.jar"))
 
     if file2copy is not None:
         copy(file2copy, f"{dir}")
@@ -92,4 +92,7 @@ def get_downloads():
     for i in listdir(DOWNLOADS):
         if i.endswith(".mrpack"):
             ls.append(i)
+    if not ls:
+        print("there are no .mrpack files")
+        exit()
     return ls

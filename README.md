@@ -1,13 +1,13 @@
-# Requirements
-- python
-- requests (python)
-## How to install requests
-- make sure python is installed by running `python --version` (in command prompt), if it looks something like `3.14` u r good
-- run `pip install requests` (also in command prompt)
 # How to Download
 - on the github page go to the "Code" drop down and press "Download ZIP"
 ![](images/Screenshot1.png) ![](images/Screenshot2.png)
 - extract, then open in the directory command prompt
+# Requirements
+- python
+- requests (python)
+## How to install requests
+- make sure python is installed by running `python --version` (in command prompt), if it looks something like `Python 3.13` u r good
+- run `pip install requests` (also in command prompt)
 # How to Run
 - run `python main.py` in the directory with the "main.py" file (also also in command prompt)
 # Example of How to Use

@@ -1,8 +1,14 @@
-from os.path import expanduser
+from os.path import expanduser, join
+from sys import platform
 
-DOWNLOADS = f"{expanduser('~')}/Downloads"
-LABY_DIR = f"{expanduser('~')}/.minecraft/labymod-neo"
-MODPACKS_DIR = f"{LABY_DIR}/modpacks"
-ADDONS_DIR = f"{LABY_DIR}/addons"
+HOME = expanduser("~")
+DOWNLOADS = join(HOME, "Downloads")
+LABY_DIR = (
+    join(HOME, ".minecraft", "labymod-neo")
+    if platform == "linux"
+    else join(HOME, "AppData", "Roaming", ".minecraft")
+)
+MODPACKS_DIR = join(LABY_DIR, "modpacks")
+ADDONS_DIR = join(LABY_DIR, "addons")
 
-MODPACKS_FILE = f"{MODPACKS_DIR}/modpacks.json"
+MODPACKS_FILE = join(MODPACKS_DIR, "modpacks.json")
