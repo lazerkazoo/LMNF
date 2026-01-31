@@ -65,7 +65,7 @@ def install_modpack(file2copy: str):
     for num, thread in enumerate(threads):
         if num % 10 == 0 and num > 0:
             threads[num - 10].join()
-        print(f"[{dirname(dest).split('/')[-1]}] [{num + 1}/{len(files)}]")
+        print(f"[{num + 1}/{len(files)}]")
         thread.start()
 
     modpacks["packs"][name.lower()] = {
