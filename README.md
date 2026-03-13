@@ -1,3 +1,7 @@
+# **this is now useless with the new version of labymod launcher**
+# ***labymod launcher now has this functionality**
+
+
 # How to Download
 - on the github page go to the "Code" drop down and press "Download ZIP"
 ![](images/Screenshot1.png) ![](images/Screenshot2.png)
